@@ -1,18 +1,32 @@
 "use client";
 
-import { useAppDispatch } from "@/store/hooks";
-import { toggleTheme } from "@/store/slices/themeSlice";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
+import { Sun, Moon } from "lucide-react";
 
 export default function ThemeToggle() {
 
-  const dispatch = useAppDispatch();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <button
-      onClick={() => dispatch(toggleTheme())}
-      className="px-3 py-2 rounded bg-gray-200 dark:bg-gray-700"
+      onClick={() =>
+        setTheme(theme === "dark" ? "light" : "dark")
+      }
+      className="p-2 cursor-pointer rounded-lg bg-gray-200 dark:bg-gray-700 hover:scale-105 transition"
     >
-      Toggle Theme
+      {theme === "dark" ? (
+        <Sun size={20} />
+      ) : (
+        <Moon size={20} />
+      )}
     </button>
   );
 }
