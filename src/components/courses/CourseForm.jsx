@@ -21,6 +21,7 @@ export default function CourseForm({ editing, onCancel }) {
       description: "",
       thumbnail: null,
       modules: [],
+      status: "",
     },
   );
 
@@ -235,34 +236,49 @@ export default function CourseForm({ editing, onCancel }) {
         )}
       </div>
 
-      {/* THUMBNAIL */}
+      <div className="flex gap-4 items-center">
+        <div>
+          <select
+            name="status"
+            value={form.status}
+            onChange={handleChange}
+            className="border dark:bg-zinc-800  p-2.5 rounded-lg"
+          >
+            <option value="">Select Status</option>
+            <option>Published</option>
+            <option>Draft</option>
+          </select>
+        </div>
+        <div>
+          {/* THUMBNAIL */}
+          <div className="flex items-center gap-4">
+            <input
+              type="file"
+              accept="image/*"
+              className="border p-2 rounded-lg"
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  thumbnail: URL.createObjectURL(e.target.files[0]),
+                })
+              }
+            />
 
-      <div className="flex items-center gap-4">
-        <input
-          type="file"
-          accept="image/*"
-          className="border p-2 rounded-lg"
-          onChange={(e) =>
-            setForm({
-              ...form,
-              thumbnail: URL.createObjectURL(e.target.files[0]),
-            })
-          }
-        />
-
-        {form.thumbnail && (
-          <img
-            src={form.thumbnail}
-            className="w-28 h-16 rounded object-cover"
-          />
-        )}
+            {form.thumbnail && (
+              <img
+                src={form.thumbnail}
+                className="w-20 h-10 rounded object-contain"
+              />
+            )}
+          </div>
+          {errors.thumbnail && (
+            <p className="text-red-500 text-sm">{errors.thumbnail}</p>
+          )}
+        </div>
       </div>
-      {errors.thumbnail && (
-        <p className="text-red-500 text-sm">{errors.thumbnail}</p>
-      )}
       {/* MODULE SYSTEM */}
 
-      <div className="space-y-6">
+      <div className="space-y-3">
         <div className="flex justify-between items-center">
           <h3 className="font-semibold flex items-center gap-2">
             <Layers size={18} />

@@ -92,6 +92,7 @@ const courseSlice = createSlice({
   reducers: {
     addCourse: (state, action) => {
       state.courses.push(action.payload);
+      console.log("Course added:", action.payload);
     },
 
     updateCourse: (state, action) => {
