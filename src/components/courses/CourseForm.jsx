@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { addCourse, updateCourse } from "@/features/courses/courseSlice";
 
@@ -24,6 +24,15 @@ export default function CourseForm({ editing, onCancel }) {
       status: "",
     },
   );
+
+useEffect(() => {
+  if (editing) {
+    setForm({
+      ...editing,
+      modules: editing.modules || [],
+    });
+  }
+}, [editing]);
 
   const [errors, setErrors] = useState({});
 
@@ -58,6 +67,7 @@ export default function CourseForm({ editing, onCancel }) {
     const modules = [...form.modules];
     modules[index].title = value;
     setForm({ ...form, modules });
+      
   };
 
   // -------------------
@@ -104,7 +114,7 @@ export default function CourseForm({ editing, onCancel }) {
     if (!form.price) err.price = "Price required";
     if (!form.duration) err.duration = "Duration required";
     if (!form.level) err.level = "Level required";
-    if (!form.description.trim()) err.description = "Description required";
+    if (!form.description ) err.description = "Description required";
     if (!form.thumbnail) err.thumbnail = "Thumbnail required";
 
     setErrors(err);
@@ -133,7 +143,7 @@ export default function CourseForm({ editing, onCancel }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white dark:bg-zinc-900 border rounded-xl p-8 space-y-8"
+      className="bg-white  dark:bg-zinc-900 border rounded-xl p-8 space-y-8"
     >
       <h2 className="text-xl font-semibold">
         {editing ? "Update Course" : "Create Course"}
@@ -295,7 +305,7 @@ export default function CourseForm({ editing, onCancel }) {
           </button>
         </div>
 
-        {form.modules.map((module, mIndex) => (
+        {form.modules?.map((module, mIndex) => (
           <div key={mIndex} className="border rounded-lg p-4 space-y-4">
             {/* MODULE TITLE */}
 
