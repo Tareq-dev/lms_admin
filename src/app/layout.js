@@ -3,7 +3,7 @@ import ReduxProvider from "@/providers/ReduxProvider";
 import ThemeProvider from "@/providers/ThemeProvider";
 
 export const metadata = {
-  title: "SaaS Dashboard",
+  title: "LMS Dashboard",
   description: "Professional Admin Dashboard",
 };
 
