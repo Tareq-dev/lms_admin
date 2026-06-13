@@ -4,16 +4,14 @@ import DashboardLayout from "@/components/layout/DashboardLayout";
 import { useState } from "react";
 import { Plus, ArrowLeft, Layers, HelpCircle, Users } from "lucide-react";
 import QuizListTable from "@/components/exams/QuizListTable";
-import QuizCreatorStudio from "@/components/exams/QuizAuditStudio";
-import QuizAuditStudio from "@/components/exams/QuizAuditStudio"; // নতুন ডিটেইলস স্ক্রিন
+import QuizCreatorStudio from "@/components/exams/QuizCreatorStudio";
+import QuizAuditStudio from "@/components/exams/QuizAuditStudio";
 
 export default function QuizDashboard() {
   const [view, setView] = useState("list"); // list | create | audit
   const [selectedQuiz, setSelectedQuiz] = useState(null);
-  // ❌ আগের কোড (যা হাইড্রেশন এরর দিচ্ছিল):
-  // id: `QZ-${Date.now().toString().slice(-3)}`
 
-  //  সরাসরি ফিক্সড আইডি দিন ডামি ডাটাতে:
+  // 🔄 ডামি ডাটা ফিক্সড (লাইভ কুইজে টাইমস্ট্যাম্প যুক্ত করা হয়েছে)
   const [quizzes, setQuizzes] = useState([
     {
       id: "QZ-904",
@@ -21,6 +19,7 @@ export default function QuizDashboard() {
       course: "Next.js Premium Course",
       date: "18 June, 2026",
       duration: "15",
+      liveDurationHours: "2", // ডিফল্ট ২ ঘণ্টা
       questionsCount: 1,
       totalParticipants: 240,
       status: "Upcoming",
@@ -39,9 +38,11 @@ export default function QuizDashboard() {
       course: "MERN Stack Web Development",
       date: "14 June, 2026",
       duration: "10",
+      liveDurationHours: "1.5", // ১.৫ ঘণ্টা লাইভ উইন্ডো
+      liveStartedAt: new Date().toISOString(), // 👈 কারেন্ট টাইমস্ট্যাম্প! যাতে লোড নিলেই কাউন্টডাউন রান করে
       questionsCount: 1,
       totalParticipants: 412,
-      status: "Live",
+      status: "Live", // সরাসরি লাইভ মোড
       questions: [
         {
           id: 1,
@@ -53,25 +54,31 @@ export default function QuizDashboard() {
     },
   ]);
 
-  // কুইজ ক্রিয়েট অথবা এডিট সেভ করার হ্যান্ডেলার
+  // 🎯 ক্রিয়েট অথবা এডিট সেভ করার পারফেক্ট হ্যান্ডেলার
   const handlePublishQuiz = (quizData) => {
     if (selectedQuiz) {
-      // এডিট মোড সেভ করা
+      // এডিট মোড সেভ করা (নতুন সব প্রোপার্টি সহ মার্জ হবে)
       setQuizzes(
         quizzes.map((q) =>
           q.id === selectedQuiz.id
-            ? { ...q, ...quizData, questionsCount: quizData.questions.length }
-            : q,
-        ),
+            ? { 
+                ...q, 
+                ...quizData, 
+                questionsCount: quizData.questions.length 
+              }
+            : q
+        )
       );
     } else {
-      // নতুন কুইজ অ্যাড করা (সবার আগে দেখাবে)
+      // নতুন কুইজ তৈরি করা
       const formattedQuiz = {
         id: `QZ-${Date.now().toString().slice(-3)}`,
         title: quizData.title,
         course: quizData.course,
-        date: "Today",
+        date: quizData.date,
         duration: quizData.duration,
+        liveDurationHours: quizData.liveDurationHours || "2", // 👈 স্টুডিও থেকে রিসিভ করা লাইভ আওয়ার
+        liveStartedAt: null, // শুরুতে নাল থাকবে, "Go Live" এ ক্লিক করলে টাইমস্ট্যাম্প বসবে
         questionsCount: quizData.questions.length,
         totalParticipants: 0,
         status: "Upcoming",
@@ -103,6 +110,7 @@ export default function QuizDashboard() {
   return (
     <DashboardLayout>
       <div className="min-h-screen bg-slate-50/50 p-6 dark:bg-zinc-950 transition-colors duration-300">
+        
         {/* Header Section */}
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -119,17 +127,13 @@ export default function QuizDashboard() {
                 </button>
               )}
               {view === "list" && "Quiz & Assessments"}
-              {view === "create" &&
-                (selectedQuiz ? "Edit Premium Quiz" : "Create Premium Quiz")}
+              {view === "create" && (selectedQuiz ? "Edit Premium Quiz" : "Create Premium Quiz")}
               {view === "audit" && "Examination Audit Review"}
             </h1>
             <p className="mt-1 text-sm text-slate-500 dark:text-zinc-400">
-              {view === "list" &&
-                "Manage real-time examinations, change live status, and monitor participants."}
-              {view === "create" &&
-                "Modify question cards, answers blueprints, and target criteria."}
-              {view === "audit" &&
-                "In-depth review of exam metrics, schedule dates, and questionnaire structure."}
+              {view === "list" && "Manage real-time examinations, change live status, and monitor participants."}
+              {view === "create" && "Modify question cards, answers blueprints, and target criteria."}
+              {view === "audit" && "In-depth review of exam metrics, schedule dates, and questionnaire structure."}
             </p>
           </div>
 
@@ -156,35 +160,29 @@ export default function QuizDashboard() {
                   <Layers size={20} />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase">
-                    Total Quizzes
-                  </p>
-                  <h3 className="text-xl font-bold text-slate-800 dark:text-white">
-                    {quizzes.length}
-                  </h3>
+                  <p className="text-xs font-semibold text-slate-400 uppercase">Total Quizzes</p>
+                  <h3 className="text-xl font-bold text-slate-800 dark:text-white">{quizzes.length}</h3>
                 </div>
               </div>
+              
               <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm dark:border-zinc-900 dark:bg-zinc-900/50 flex items-center gap-4">
                 <div className="rounded-xl bg-emerald-50 p-3 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
                   <HelpCircle size={20} />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase">
-                    Live Running
-                  </p>
+                  <p className="text-xs font-semibold text-slate-400 uppercase">Live Running</p>
                   <h3 className="text-xl font-bold text-emerald-600">
                     {quizzes.filter((q) => q.status === "Live").length}
                   </h3>
                 </div>
               </div>
+
               <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm dark:border-zinc-900 dark:bg-zinc-900/50 flex items-center gap-4">
                 <div className="rounded-xl bg-violet-50 p-3 text-violet-600 dark:bg-violet-500/10 dark:text-violet-400">
                   <Users size={20} />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase">
-                    Total Participations
-                  </p>
+                  <p className="text-xs font-semibold text-slate-400 uppercase">Total Participations</p>
                   <h3 className="text-xl font-bold text-slate-800 dark:text-white">
                     {quizzes.reduce((s, c) => s + c.totalParticipants, 0)}
                   </h3>
@@ -192,6 +190,7 @@ export default function QuizDashboard() {
               </div>
             </div>
 
+            {/* মেইন টেবিল কম্পোনেন্ট */}
             <QuizListTable
               quizzes={quizzes}
               setQuizzes={setQuizzes}
