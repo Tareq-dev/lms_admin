@@ -26,11 +26,22 @@ import {
   Coins,
   ShieldCheck,
   Award,
-  LifeBuoy
+  LifeBuoy,
 } from "lucide-react";
 
 // 📂 মেনু আইটেমগুলোকে প্রিমিয়াম ক্যাটাগরিতে ভাগ করা হয়েছে
 const menuGroups = [
+  {
+    groupName: "STUDENTS & COURSES",
+    items: [
+      {
+        name: "STU Dashboard",
+        icon: LayoutDashboard,
+        path: "/student-dashboard",
+      },
+      { name: "STU - My Courses", icon: BarChart3, path: "/student-courses" },
+    ],
+  },
   {
     groupName: "Core",
     items: [
@@ -61,7 +72,7 @@ const menuGroups = [
       { name: "Orders", icon: ShoppingCart, path: "/orders", badge: "Hot" },
     ]
   },
-  
+
   {
     groupName: "System",
     items: [
@@ -103,7 +114,6 @@ export default function Sidebar() {
       >
         {/* টপ স্ক্রোল কন্টেইনার */}
         <div className="flex flex-col h-[calc(100vh-70px)] overflow-y-auto no-scrollbar">
-          
           {/* 🏷️ ব্র্যান্ডিং হেডার জোন */}
           <div className="flex items-center justify-between px-4.5 h-16 border-b border-slate-50 dark:border-zinc-900/40 sticky top-0 bg-white/80 dark:bg-zinc-950/85 backdrop-blur-md z-10">
             {!collapsed && (
@@ -112,13 +122,18 @@ export default function Sidebar() {
                   <Sparkles size={14} className="animate-pulse" />
                 </div>
                 <h1 className="font-black text-base tracking-tight text-slate-900 dark:text-white bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-zinc-400 bg-clip-text text-transparent">
-                  EduPulse <span className="text-[9px] bg-indigo-500 text-white font-mono px-1 py-0.2 rounded-md align-middle ml-1">LMS</span>
+                  EduPulse{" "}
+                  <span className="text-[9px] bg-indigo-500 text-white font-mono px-1 py-0.2 rounded-md align-middle ml-1">
+                    LMS
+                  </span>
                 </h1>
               </div>
             )}
 
             <button
-              onClick={() => (mobileOpen ? setMobileOpen(false) : setCollapsed(!collapsed))}
+              onClick={() =>
+                mobileOpen ? setMobileOpen(false) : setCollapsed(!collapsed)
+              }
               className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-50 dark:hover:bg-zinc-900 hover:text-slate-700 dark:hover:text-zinc-200 transition"
             >
               {mobileOpen ? (
@@ -147,8 +162,11 @@ export default function Sidebar() {
                 {/* গ্রুপ আইটেমস */}
                 {group.items.map((item, index) => {
                   const Icon = item.icon;
-                  const isActive = pathname === item.path;
-
+                  // const isActive = pathname === item.path;
+                  const isActive =
+                    pathname === item.path ||
+                    (item.path === "/student-courses" &&
+                      pathname.startsWith("/student-courses/"));
                   return (
                     <Link
                       key={index}
@@ -163,10 +181,16 @@ export default function Sidebar() {
                       `}
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`transition-transform duration-200 ${!isActive && "group-hover:scale-105"}`}>
+                        <div
+                          className={`transition-transform duration-200 ${!isActive && "group-hover:scale-105"}`}
+                        >
                           <Icon size={18} strokeWidth={isActive ? 2.2 : 1.8} />
                         </div>
-                        {!collapsed && <span className="tracking-tight truncate">{item.name}</span>}
+                        {!collapsed && (
+                          <span className="tracking-tight truncate">
+                            {item.name}
+                          </span>
+                        )}
                       </div>
 
                       {/* 💎 নোটিফিকেশন / ট্রেন্ডিং ব্যাজেস */}
@@ -177,10 +201,10 @@ export default function Sidebar() {
                               isActive
                                 ? "bg-white/20 text-white dark:bg-zinc-900 dark:text-white"
                                 : item.badge === "New"
-                                ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400"
-                                : item.badge === "Hot"
-                                ? "bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400"
-                                : "bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400"
+                                  ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400"
+                                  : item.badge === "Hot"
+                                    ? "bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400"
+                                    : "bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400"
                             }
                           `}
                         >
@@ -214,9 +238,12 @@ export default function Sidebar() {
             {!collapsed && (
               <div className="flex flex-col truncate animate-in fade-in duration-300">
                 <span className="text-xs font-bold text-slate-800 dark:text-zinc-200 leading-tight flex items-center gap-1">
-                  Alex Mercer <ShieldCheck size={12} className="text-indigo-500" />
+                  Alex Mercer{" "}
+                  <ShieldCheck size={12} className="text-indigo-500" />
                 </span>
-                <span className="text-[10px] text-slate-400 font-medium tracking-wide">Owner Account</span>
+                <span className="text-[10px] text-slate-400 font-medium tracking-wide">
+                  Owner Account
+                </span>
               </div>
             )}
           </div>

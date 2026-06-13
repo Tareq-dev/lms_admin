@@ -9,7 +9,7 @@ export default function DashboardLayout({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // 🛡️ ইউজার লগইন না থাকলে তাকে ড্যাশবোর্ড না দেখিয়ে সরাসরি Auth (Login/Signup) পেজ দেখাবে
-  if (!isAuthenticated) {
+  if (isAuthenticated) {
     return <AuthPage onAuthSuccess={() => setIsAuthenticated(true)} />;
   }
 
