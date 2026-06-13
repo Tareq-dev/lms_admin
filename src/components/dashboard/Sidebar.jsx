@@ -40,6 +40,9 @@ const menuGroups = [
         path: "/student-dashboard",
       },
       { name: "STU - My Courses", icon: BarChart3, path: "/student-courses" },
+      { name: "STU - Leaderboard", icon: BarChart3, path: "/leaderboard" },
+      { name: "STU - Certificates", icon: BarChart3, path: "/certificates" },
+      { name: "STU - Settings", icon: BarChart3, path: "/settings" },
     ],
   },
   {
@@ -76,6 +79,7 @@ const menuGroups = [
   {
     groupName: "System",
     items: [
+      { name: "Mail to", icon: Bell, path: "/mail" },
       { name: "Notifications", icon: Bell, path: "/notifications", badge: "9+" },
       { name: "Settings", icon: Settings, path: "/settings" },
     ]
